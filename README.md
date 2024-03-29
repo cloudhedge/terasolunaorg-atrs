@@ -33,7 +33,7 @@ Execute the following command to initialize DB.
 $ mvn sql:execute -f atrs-initdb/pom.xml
 ```
 
-## For JDK 17
+## For JDK 17 , JDK 21
 
 ### Build
 
