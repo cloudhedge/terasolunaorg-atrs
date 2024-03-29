@@ -53,7 +53,7 @@ Access the following URL.
 
 http://localhost:8080/atrs/
 
-## For JDK 11 , JDK 17
+## For JDK 11 , JDK 17 , JDK 21
 
 ### Build
 
