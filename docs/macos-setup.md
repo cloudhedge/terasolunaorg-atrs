@@ -58,10 +58,10 @@ echo 'export PATH="/opt/homebrew/opt/postgresql@14/bin:$PATH"' >> ~/.zshrc
 source ~/.zshrc
 ```
 
-**Create database and user:**
+**Create database and postgres role:**
 ```bash
 createdb atrs
-psql -d atrs -c "ALTER USER $(whoami) WITH PASSWORD 'postgres';"
+psql -d postgres -c "CREATE ROLE postgres WITH LOGIN SUPERUSER PASSWORD 'postgres';"
 ```
 
 **Verify:**
@@ -71,13 +71,14 @@ psql -d atrs -c "SELECT 1;"
 
 ---
 
-## Step 5: Update Database Config ✅
+## Step 5: Update Config ✅
 
 **File:** `JavaConfig-JSP/atrs/atrs-env/src/main/resources/META-INF/spring/atrs-infra.properties`
 
-Update `database.username` to your macOS username:
+Update these values:
 ```properties
 database.username=<your-macos-username>
+report.dir=./reports/reservation
 ```
 
 ---
@@ -91,7 +92,7 @@ mvn clean install
 
 ---
 
-## Step 7: Initialize Database Schema
+## Step 7: Initialize Database Schema ✅
 
 ```bash
 mvn sql:execute -f atrs-initdb/pom.xml
@@ -99,7 +100,7 @@ mvn sql:execute -f atrs-initdb/pom.xml
 
 ---
 
-## Step 8: Run Application
+## Step 8: Run Application ✅
 
 ```bash
 mvn cargo:run -pl atrs-web
@@ -107,7 +108,7 @@ mvn cargo:run -pl atrs-web
 
 ---
 
-## Step 9: Verify
+## Step 9: Verify ✅
 
 Open: http://localhost:8080/atrs/
 
