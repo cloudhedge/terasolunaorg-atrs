@@ -5,7 +5,10 @@
       "mcp__puppeteer__puppeteer_screenshot",
       "mcp__puppeteer__puppeteer_navigate",
       "mcp__puppeteer__puppeteer_evaluate",
-      "mcp__puppeteer__puppeteer_select"
+      "mcp__puppeteer__puppeteer_select",
+      "WebSearch",
+      "WebFetch(domain:www.speakeasy.com)",
+      "WebFetch(domain:github.com)"
     ]
   }
 }
