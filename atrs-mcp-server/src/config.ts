@@ -2,7 +2,7 @@
  * Configuration for ATRS MCP Server
  */
 export interface Config {
-  /** Base URL for ATRS API (e.g., http://localhost:8080/atrs) */
+  /** Base URL for ATRS API (default: http://localhost:8080/atrs/) */
   apiBaseUrl: string;
   /** Request timeout in milliseconds */
   timeout: number;
