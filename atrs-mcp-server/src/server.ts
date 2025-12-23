@@ -3,6 +3,8 @@ import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 import { z } from 'zod';
 import { loadConfig } from './config.js';
 import { AtrsApiClient } from './api/client.js';
+import { airports } from './data/airports.js';
+import { fareTypes } from './data/fare-types.js';
 
 /**
  * Create and configure the MCP server for ATRS
@@ -94,6 +96,204 @@ export function createServer(): McpServer {
         const message = error instanceof Error ? error.message : 'Unknown error';
         return {
           content: [{ type: 'text', text: `Error checking reservation: ${message}` }],
+          isError: true,
+        };
+      }
+    }
+  );
+
+  // Register reserve_ticket tool
+  server.tool(
+    'reserve_ticket',
+    'Reserve a flight ticket for passengers',
+    {
+      flightName: z.string().describe('Flight name (e.g., NH001)'),
+      departureDate: z.string().describe('Departure date in yyyy/MM/dd format'),
+      fareType: z.string().describe('Fare type code (OW, RT, RD1, RD7, ED, LD, GD)'),
+      seatClass: z.enum(['N', 'S']).default('N').describe('N=standard, S=premium'),
+      flightType: z.enum(['OW', 'RT']).default('OW').describe('OW=one-way, RT=round-trip'),
+      passengers: z
+        .array(
+          z.object({
+            familyName: z.string().describe('Family name (Katakana)'),
+            givenName: z.string().describe('Given name (Katakana)'),
+            age: z.number().describe('Age'),
+            gender: z.enum(['M', 'F']).describe('M=male, F=female'),
+          })
+        )
+        .describe('List of passengers'),
+      contact: z
+        .object({
+          familyName: z.string().describe('Contact family name'),
+          givenName: z.string().describe('Contact given name'),
+          age: z.number().describe('Contact age'),
+          gender: z.enum(['M', 'F']).describe('Contact gender'),
+          phone: z.string().describe('Phone number (e.g., 090-1234-5678)'),
+          email: z.string().describe('Email address'),
+        })
+        .describe('Contact person information'),
+    },
+    async ({ flightName, departureDate, fareType, seatClass, flightType, passengers, contact }) => {
+      try {
+        // Parse phone number (090-1234-5678 → tel1, tel2, tel3)
+        const phoneParts = contact.phone.replace(/[^\d]/g, '');
+        const tel1 = phoneParts.slice(0, 3);
+        const tel2 = phoneParts.slice(3, 7);
+        const tel3 = phoneParts.slice(7, 11);
+
+        const result = await apiClient.reserveTicket({
+          repFamilyName: contact.familyName,
+          repGivenName: contact.givenName,
+          repAge: contact.age,
+          repGender: contact.gender,
+          repTel1: tel1,
+          repTel2: tel2,
+          repTel3: tel3,
+          repMail: contact.email,
+          flightType,
+          selectFlightResourceList: [
+            {
+              depDate: departureDate,
+              flightName,
+              boardingClassCd: seatClass,
+              fareTypeCd: fareType as any,
+            },
+          ],
+          passengerResourceList: passengers.map((p) => ({
+            familyName: p.familyName,
+            givenName: p.givenName,
+            age: p.age,
+            gender: p.gender,
+          })),
+        });
+
+        return {
+          content: [
+            {
+              type: 'text',
+              text: JSON.stringify(
+                {
+                  reservationNumber: result.reserveNo,
+                  paymentDeadline: result.paymentDate,
+                  totalFare: result.totalFare,
+                  passengers: result.passengerResourceList.length,
+                },
+                null,
+                2
+              ),
+            },
+          ],
+        };
+      } catch (error) {
+        const message = error instanceof Error ? error.message : 'Unknown error';
+        return {
+          content: [{ type: 'text', text: `Error reserving ticket: ${message}` }],
+          isError: true,
+        };
+      }
+    }
+  );
+
+  // Register list_airports tool
+  server.tool(
+    'list_airports',
+    'List all available airports',
+    {
+      filter: z.string().optional().describe('Optional filter by name or region'),
+    },
+    async ({ filter }) => {
+      let result = airports;
+      if (filter) {
+        const f = filter.toLowerCase();
+        result = airports.filter(
+          (a) =>
+            a.code.toLowerCase().includes(f) ||
+            a.name.includes(filter) ||
+            a.nameEn.toLowerCase().includes(f)
+        );
+      }
+
+      const formatted = result.map((a) => ({
+        code: a.code,
+        name: a.nameEn,
+        japanese: a.name,
+      }));
+
+      return {
+        content: [{ type: 'text', text: JSON.stringify(formatted, null, 2) }],
+      };
+    }
+  );
+
+  // Register list_fare_types tool
+  server.tool(
+    'list_fare_types',
+    'List all available fare types with discounts',
+    {},
+    async () => {
+      const formatted = fareTypes.map((f) => ({
+        code: f.code,
+        name: f.nameEn,
+        discount: `${f.discountPercent}%`,
+        requirements: f.description,
+      }));
+
+      return {
+        content: [{ type: 'text', text: JSON.stringify(formatted, null, 2) }],
+      };
+    }
+  );
+
+  // Register check_auth_status tool
+  server.tool(
+    'check_auth_status',
+    'Check if user is authenticated',
+    {},
+    async () => {
+      try {
+        const isAuthenticated = await apiClient.checkAuthStatus();
+        return {
+          content: [
+            {
+              type: 'text',
+              text: isAuthenticated ? 'User is authenticated.' : 'User is not authenticated.',
+            },
+          ],
+        };
+      } catch (error) {
+        const message = error instanceof Error ? error.message : 'Unknown error';
+        return {
+          content: [{ type: 'text', text: `Error checking auth: ${message}` }],
+          isError: true,
+        };
+      }
+    }
+  );
+
+  // Register check_member tool
+  server.tool(
+    'check_member',
+    'Check if a membership number is valid',
+    {
+      membershipNumber: z.string().describe('10-digit membership number'),
+    },
+    async ({ membershipNumber }) => {
+      try {
+        const exists = await apiClient.checkMemberAvailable(membershipNumber);
+        return {
+          content: [
+            {
+              type: 'text',
+              text: exists
+                ? `Membership ${membershipNumber} is valid.`
+                : `Membership ${membershipNumber} not found.`,
+            },
+          ],
+        };
+      } catch (error) {
+        const message = error instanceof Error ? error.message : 'Unknown error';
+        return {
+          content: [{ type: 'text', text: `Error checking membership: ${message}` }],
           isError: true,
         };
       }
