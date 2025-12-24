@@ -51,7 +51,7 @@ export class AtrsApiClient {
 
   /**
    * Search for available flights
-   * GET /flight
+   * GET /api/v1/flight
    */
   async searchFlights(query: FlightSearchQuery): Promise<FlightResource[]> {
     const params = new URLSearchParams({
@@ -62,7 +62,7 @@ export class AtrsApiClient {
       boardingClassCd: query.boardingClassCd,
     });
 
-    const response = await this.fetch(`/flight?${params.toString()}`);
+    const response = await this.fetch(`/api/v1/flight?${params.toString()}`);
 
     if (!response.ok) {
       const error = await this.parseError(response);
@@ -74,10 +74,10 @@ export class AtrsApiClient {
 
   /**
    * Reserve a ticket
-   * POST /ticket
+   * POST /api/v1/ticket
    */
   async reserveTicket(request: TicketReserveRequest): Promise<TicketReserveResponse> {
-    const response = await this.fetch('/ticket', {
+    const response = await this.fetch('/api/v1/ticket', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(request),
@@ -93,11 +93,11 @@ export class AtrsApiClient {
 
   /**
    * Check if a reservation exists
-   * GET /ticket/check?reserveNo=X
+   * GET /api/v1/ticket/check?reserveNo=X
    */
   async checkReservation(reserveNo: string): Promise<boolean> {
     const params = new URLSearchParams({ reserveNo });
-    const response = await this.fetch(`/ticket/check?${params.toString()}`);
+    const response = await this.fetch(`/api/v1/ticket/check?${params.toString()}`);
 
     if (!response.ok) {
       const error = await this.parseError(response);
@@ -109,12 +109,11 @@ export class AtrsApiClient {
 
   /**
    * Check authentication status
-   * GET /api/auth/status
-   * Returns true if authenticated, false otherwise
+   * Returns true if credentials are set (REST API uses Basic Auth per-request)
    */
   async checkAuthStatus(): Promise<boolean> {
-    const response = await this.fetch('/api/auth/status');
-    return response.status === 200;
+    // REST API uses Basic Auth per-request, so just check if credentials are set
+    return this.isAuthenticated();
   }
 
   /**

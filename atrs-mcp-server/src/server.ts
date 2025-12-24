@@ -29,7 +29,7 @@ export function createServer(): McpServer {
       flightType: z.enum(['OW', 'RT']).default('OW').describe('OW=one-way, RT=round-trip'),
       seatClass: z.enum(['N', 'S']).default('N').describe('N=standard, S=premium'),
     },
-    async ({ from, to, date, flightType, seatClass }) => {
+    async ({ from, to, date, flightType = 'OW', seatClass = 'N' }) => {
       try {
         const flights = await apiClient.searchFlights({
           depAirportCd: from,
