@@ -12,10 +12,41 @@ import type {
 export class AtrsApiClient {
   private baseUrl: string;
   private timeout: number;
+  private authHeader?: string;
 
   constructor(config: Config) {
     this.baseUrl = config.apiBaseUrl.replace(/\/$/, ''); // Remove trailing slash
     this.timeout = config.timeout;
+
+    // Auto-login if credentials provided
+    if (config.credentials) {
+      this.setCredentials(
+        config.credentials.membershipNumber,
+        config.credentials.password
+      );
+    }
+  }
+
+  /**
+   * Set Basic Auth credentials for all subsequent requests
+   */
+  setCredentials(membershipNumber: string, password: string): void {
+    const encoded = Buffer.from(`${membershipNumber}:${password}`).toString('base64');
+    this.authHeader = `Basic ${encoded}`;
+  }
+
+  /**
+   * Clear stored credentials
+   */
+  clearCredentials(): void {
+    this.authHeader = undefined;
+  }
+
+  /**
+   * Check if credentials are set
+   */
+  isAuthenticated(): boolean {
+    return this.authHeader !== undefined;
   }
 
   /**
@@ -98,16 +129,23 @@ export class AtrsApiClient {
   }
 
   /**
-   * Internal fetch with timeout and base URL
+   * Internal fetch with timeout, base URL, and auth header
    */
   private async fetch(path: string, options: RequestInit = {}): Promise<Response> {
     const url = `${this.baseUrl}${path}`;
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), this.timeout);
 
+    // Merge headers with auth header if set
+    const headers = new Headers(options.headers);
+    if (this.authHeader) {
+      headers.set('Authorization', this.authHeader);
+    }
+
     try {
       const response = await fetch(url, {
         ...options,
+        headers,
         signal: controller.signal,
       });
       return response;

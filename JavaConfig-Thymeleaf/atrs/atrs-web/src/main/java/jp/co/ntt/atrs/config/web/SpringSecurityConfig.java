@@ -80,7 +80,12 @@ public class SpringSecurityConfig {
     @Bean
     @Order(1)
     public SecurityFilterChain restFilterChain(HttpSecurity http) throws Exception {
-        http.securityMatcher(antMatcher("/api/v1/**"));
+        http.securityMatchers(matchers -> matchers
+                .requestMatchers(antMatcher("/api/v1/**"))
+                .requestMatchers(antMatcher("/flight/**"))
+                .requestMatchers(antMatcher("/ticket/**"))
+                .requestMatchers(antMatcher("/api/auth/**"))
+                .requestMatchers(antMatcher("/api/member/**")));
         http.sessionManagement(session -> session.sessionCreationPolicy(
                 SessionCreationPolicy.STATELESS));
         http.httpBasic(Customizer.withDefaults());

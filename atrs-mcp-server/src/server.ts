@@ -244,19 +244,74 @@ export function createServer(): McpServer {
     }
   );
 
+  // Register login tool
+  server.tool(
+    'login',
+    'Authenticate with membership credentials',
+    {
+      membershipNumber: z.string().describe('10-digit membership number'),
+      password: z.string().describe('Account password'),
+    },
+    async ({ membershipNumber, password }) => {
+      try {
+        apiClient.setCredentials(membershipNumber, password);
+        // Verify credentials by calling auth status endpoint
+        const isValid = await apiClient.checkAuthStatus();
+        if (!isValid) {
+          apiClient.clearCredentials();
+          return {
+            content: [{ type: 'text', text: 'Invalid credentials. Login failed.' }],
+            isError: true,
+          };
+        }
+        return {
+          content: [{ type: 'text', text: `Logged in as ${membershipNumber}` }],
+        };
+      } catch (error) {
+        apiClient.clearCredentials();
+        const message = error instanceof Error ? error.message : 'Unknown error';
+        return {
+          content: [{ type: 'text', text: `Login failed: ${message}` }],
+          isError: true,
+        };
+      }
+    }
+  );
+
+  // Register logout tool
+  server.tool(
+    'logout',
+    'Clear stored credentials',
+    {},
+    async () => {
+      apiClient.clearCredentials();
+      return {
+        content: [{ type: 'text', text: 'Logged out successfully.' }],
+      };
+    }
+  );
+
   // Register check_auth_status tool
   server.tool(
     'check_auth_status',
-    'Check if user is authenticated',
+    'Check current authentication status',
     {},
     async () => {
+      const hasCredentials = apiClient.isAuthenticated();
+      if (!hasCredentials) {
+        return {
+          content: [{ type: 'text', text: 'Not authenticated. Use login tool to authenticate.' }],
+        };
+      }
       try {
-        const isAuthenticated = await apiClient.checkAuthStatus();
+        const isValid = await apiClient.checkAuthStatus();
         return {
           content: [
             {
               type: 'text',
-              text: isAuthenticated ? 'User is authenticated.' : 'User is not authenticated.',
+              text: isValid
+                ? 'Authenticated and credentials are valid.'
+                : 'Credentials set but may be invalid.',
             },
           ],
         };
