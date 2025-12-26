@@ -19,15 +19,17 @@ export function createServer(): McpServer {
   });
 
   // Register search_flights tool
-  server.tool(
+  server.registerTool(
     'search_flights',
-    'Search for available flights between airports',
     {
-      from: z.string().describe('Departure airport code (e.g., HND, NRT)'),
-      to: z.string().describe('Arrival airport code (e.g., KIX, ITM)'),
-      date: z.string().describe('Departure date in yyyy/MM/dd format'),
-      flightType: z.enum(['OW', 'RT']).default('OW').describe('OW=one-way, RT=round-trip'),
-      seatClass: z.enum(['N', 'S']).default('N').describe('N=standard, S=premium'),
+      description: 'Search for available flights between airports',
+      inputSchema: {
+        from: z.string().describe('Departure airport code (e.g., HND, NRT)'),
+        to: z.string().describe('Arrival airport code (e.g., KIX, ITM)'),
+        date: z.string().describe('Departure date in yyyy/MM/dd format'),
+        flightType: z.enum(['OW', 'RT']).default('OW').describe('OW=one-way, RT=round-trip'),
+        seatClass: z.enum(['N', 'S']).default('N').describe('N=standard, S=premium'),
+      },
     },
     async ({ from, to, date, flightType = 'OW', seatClass = 'N' }) => {
       try {
@@ -73,11 +75,13 @@ export function createServer(): McpServer {
   );
 
   // Register check_reservation tool
-  server.tool(
+  server.registerTool(
     'check_reservation',
-    'Check if a reservation exists',
     {
-      reservationNumber: z.string().describe('The reservation number to check'),
+      description: 'Check if a reservation exists',
+      inputSchema: {
+        reservationNumber: z.string().describe('The reservation number to check'),
+      },
     },
     async ({ reservationNumber }) => {
       try {
@@ -103,35 +107,37 @@ export function createServer(): McpServer {
   );
 
   // Register reserve_ticket tool
-  server.tool(
+  server.registerTool(
     'reserve_ticket',
-    'Reserve a flight ticket for passengers',
     {
-      flightName: z.string().describe('Flight name (e.g., NH001)'),
-      departureDate: z.string().describe('Departure date in yyyy/MM/dd format'),
-      fareType: z.string().describe('Fare type code (OW, RT, RD1, RD7, ED, LD, GD)'),
-      seatClass: z.enum(['N', 'S']).default('N').describe('N=standard, S=premium'),
-      flightType: z.enum(['OW', 'RT']).default('OW').describe('OW=one-way, RT=round-trip'),
-      passengers: z
-        .array(
-          z.object({
-            familyName: z.string().describe('Family name (Katakana)'),
-            givenName: z.string().describe('Given name (Katakana)'),
-            age: z.number().describe('Age'),
-            gender: z.enum(['M', 'F']).describe('M=male, F=female'),
+      description: 'Reserve a flight ticket for passengers',
+      inputSchema: {
+        flightName: z.string().describe('Flight name (e.g., NH001)'),
+        departureDate: z.string().describe('Departure date in yyyy/MM/dd format'),
+        fareType: z.string().describe('Fare type code (OW, RT, RD1, RD7, ED, LD, GD)'),
+        seatClass: z.enum(['N', 'S']).default('N').describe('N=standard, S=premium'),
+        flightType: z.enum(['OW', 'RT']).default('OW').describe('OW=one-way, RT=round-trip'),
+        passengers: z
+          .array(
+            z.object({
+              familyName: z.string().describe('Family name (Katakana)'),
+              givenName: z.string().describe('Given name (Katakana)'),
+              age: z.number().describe('Age'),
+              gender: z.enum(['M', 'F']).describe('M=male, F=female'),
+            })
+          )
+          .describe('List of passengers'),
+        contact: z
+          .object({
+            familyName: z.string().describe('Contact family name'),
+            givenName: z.string().describe('Contact given name'),
+            age: z.number().describe('Contact age'),
+            gender: z.enum(['M', 'F']).describe('Contact gender'),
+            phone: z.string().describe('Phone number (e.g., 090-1234-5678)'),
+            email: z.string().describe('Email address'),
           })
-        )
-        .describe('List of passengers'),
-      contact: z
-        .object({
-          familyName: z.string().describe('Contact family name'),
-          givenName: z.string().describe('Contact given name'),
-          age: z.number().describe('Contact age'),
-          gender: z.enum(['M', 'F']).describe('Contact gender'),
-          phone: z.string().describe('Phone number (e.g., 090-1234-5678)'),
-          email: z.string().describe('Email address'),
-        })
-        .describe('Contact person information'),
+          .describe('Contact person information'),
+      },
     },
     async ({ flightName, departureDate, fareType, seatClass, flightType, passengers, contact }) => {
       try {
@@ -195,11 +201,13 @@ export function createServer(): McpServer {
   );
 
   // Register list_airports tool
-  server.tool(
+  server.registerTool(
     'list_airports',
-    'List all available airports',
     {
-      filter: z.string().optional().describe('Optional filter by name or region'),
+      description: 'List all available airports',
+      inputSchema: {
+        filter: z.string().optional().describe('Optional filter by name or region'),
+      },
     },
     async ({ filter }) => {
       let result = airports;
@@ -226,10 +234,12 @@ export function createServer(): McpServer {
   );
 
   // Register list_fare_types tool
-  server.tool(
+  server.registerTool(
     'list_fare_types',
-    'List all available fare types with discounts',
-    {},
+    {
+      description: 'List all available fare types with discounts',
+      inputSchema: {},
+    },
     async () => {
       const formatted = fareTypes.map((f) => ({
         code: f.code,
@@ -245,12 +255,14 @@ export function createServer(): McpServer {
   );
 
   // Register login tool
-  server.tool(
+  server.registerTool(
     'login',
-    'Authenticate with membership credentials',
     {
-      membershipNumber: z.string().describe('10-digit membership number'),
-      password: z.string().describe('Account password'),
+      description: 'Authenticate with membership credentials',
+      inputSchema: {
+        membershipNumber: z.string().describe('10-digit membership number'),
+        password: z.string().describe('Account password'),
+      },
     },
     async ({ membershipNumber, password }) => {
       try {
@@ -279,10 +291,12 @@ export function createServer(): McpServer {
   );
 
   // Register logout tool
-  server.tool(
+  server.registerTool(
     'logout',
-    'Clear stored credentials',
-    {},
+    {
+      description: 'Clear stored credentials',
+      inputSchema: {},
+    },
     async () => {
       apiClient.clearCredentials();
       return {
@@ -292,10 +306,12 @@ export function createServer(): McpServer {
   );
 
   // Register check_auth_status tool
-  server.tool(
+  server.registerTool(
     'check_auth_status',
-    'Check current authentication status',
-    {},
+    {
+      description: 'Check current authentication status',
+      inputSchema: {},
+    },
     async () => {
       const hasCredentials = apiClient.isAuthenticated();
       if (!hasCredentials) {
@@ -326,11 +342,13 @@ export function createServer(): McpServer {
   );
 
   // Register check_member tool
-  server.tool(
+  server.registerTool(
     'check_member',
-    'Check if a membership number is valid',
     {
-      membershipNumber: z.string().describe('10-digit membership number'),
+      description: 'Check if a membership number is valid',
+      inputSchema: {
+        membershipNumber: z.string().describe('10-digit membership number'),
+      },
     },
     async ({ membershipNumber }) => {
       try {
