@@ -1063,27 +1063,26 @@ erDiagram
 
         <h3>11.1 Configuration Classes</h3>
         <pre class="mermaid">
-flowchart TB
+flowchart LR
     subgraph ENV["atrs-env"]
-        AEC[AtrsEnvConfig<br/>DataSource, TxManager, JMS]
+        AEC[AtrsEnvConfig]
     end
 
     subgraph DOMAIN["atrs-domain"]
-        ADC[AtrsDomainConfig<br/>Component Scan, AOP]
-        AIC[AtrsInfraConfig<br/>MyBatis, JMS Templates]
-        ACLC[AtrsCodeListConfig<br/>CodeLists]
-        MC[MybatisConfig<br/>MyBatis Settings]
+        ADC[AtrsDomainConfig]
+        AIC[AtrsInfraConfig]
+        ACLC[AtrsCodeListConfig]
+        MC[MybatisConfig]
     end
 
     subgraph WEB["atrs-web"]
-        ACC[ApplicationContextConfig<br/>MessageSource, Encoder]
-        SMC[SpringMvcConfig<br/>MVC, Views, Interceptors]
-        SMRC[SpringMvcRestConfig<br/>REST, Jackson]
-        SSC[SpringSecurityConfig<br/>Security Chains]
+        ACC[ApplicationContextConfig]
+        SMC[SpringMvcConfig]
+        SMRC[SpringMvcRestConfig]
+        SSC[SpringSecurityConfig]
     end
 
-    ENV --> DOMAIN
-    DOMAIN --> WEB
+    ENV --> DOMAIN --> WEB
         </pre>
 
         <h3>11.2 Configuration Details</h3>
