@@ -106,20 +106,30 @@ For ATRS migration, use: **FastAPI + Exact parity + MyBatis-style raw SQL**
 | [project-structure.md](references/project-structure.md) | Setting up Python project |
 | [patterns.md](references/patterns.md) | MyBatis SQL, transactions, exceptions |
 | [testing.md](references/testing.md) | Writing pytest tests for validation |
+| [dependency-management.md](references/dependency-management.md) | **CRITICAL:** Version pinning to prevent breaking changes |
 
 ## Dependencies Template
 
 ```toml
+# IMPORTANT: Pin major.minor versions to prevent breaking changes
+# See references/dependency-management.md for details
 dependencies = [
-    "fastapi>=0.110.0",
-    "uvicorn[standard]>=0.27.0",
-    "databases[asyncpg]>=0.9.0",
-    "pydantic>=2.6.0",
-    "pydantic-settings>=2.2.0",
-    "passlib[bcrypt]>=1.7.4",
-    "python-jose[cryptography]>=3.3.0",
-    "arq>=0.25.0",
-    "redis>=5.0.0",
+    "fastapi>=0.110.0,<0.111",
+    "uvicorn[standard]>=0.27.0,<0.28",
+    "databases[asyncpg]>=0.9.0,<0.10",
+    "pydantic>=2.6.0,<3",
+    "pydantic-settings>=2.2.0,<3",
+    "passlib[bcrypt]>=1.7.4,<2",
+    "python-jose[cryptography]>=3.3.0,<4",
+    "arq>=0.25.0,<1",
+    "redis>=5.0.0,<6",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0,<9",
+    "pytest-asyncio>=0.23.0,<1",
+    "httpx>=0.27.0,<0.28",  # CRITICAL: Prevents 0.28 API breakage
 ]
 ```
 
