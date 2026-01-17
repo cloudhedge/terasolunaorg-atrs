@@ -1,0 +1,21 @@
+{
+  "E_AR_A1_2001": "ログインに失敗しました。会員番号またはパスワードをご確認ください。",
+  "E_AR_B1_2001": "該当するデータが見つかりませんでした。",
+  "validation": {
+    "required": "{{field}}は必須です",
+    "invalidEmail": "メールアドレスの形式が正しくありません",
+    "invalidPhone": "電話番号の形式が正しくありません",
+    "minLength": "{{min}}文字以上で入力してください",
+    "maxLength": "{{max}}文字以下で入力してください",
+    "exactLength": "{{length}}文字で入力してください",
+    "integer": "数値で入力してください",
+    "sameAirport": "出発空港と到着空港に同じ空港は指定できません。",
+    "dateAfter": "往路搭乗日以降である必要があります。",
+    "selectOutwardFlight": "往路のフライトを選択してください。",
+    "selectHomewardFlight": "復路のフライトを選択してください。"
+  },
+  "network": {
+    "error": "通信エラーが発生しました",
+    "timeout": "タイムアウトしました"
+  }
+}

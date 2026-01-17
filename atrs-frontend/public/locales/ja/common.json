@@ -1,0 +1,20 @@
+{
+  "nav": {
+    "home": "トップページ",
+    "domestic": "国内線",
+    "login": "ログイン",
+    "logout": "ログアウト",
+    "register": "会員登録",
+    "memberUpdate": "会員情報変更",
+    "historyReport": "履歴レポート作成",
+    "historyDownload": "履歴レポートDL"
+  },
+  "footer": {
+    "copyright": "Copyright(c) 2015 NTT Corporation."
+  },
+  "welcome": "ようこそ",
+  "sama": "さま",
+  "loading": "読み込み中...",
+  "notFound": "ページが見つかりません",
+  "backToHome": "トップページに戻る"
+}

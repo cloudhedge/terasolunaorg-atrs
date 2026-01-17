@@ -1,0 +1,38 @@
+{
+  "search": {
+    "title": "空席照会",
+    "flightType": "フライト種別",
+    "section": "区間",
+    "outwardDate": "往路搭乗日",
+    "homewardDate": "復路搭乗日",
+    "boardingClass": "搭乗クラス",
+    "submit": "照会",
+    "selectFlights": "選択フライトを予約",
+    "info": "{{startDate}} - {{endDate}}の空席照会ができます。",
+    "maxSeats": "フライトは片道便か往復便が予約でき、6席まで予約できます。"
+  },
+  "results": {
+    "outward": "往路便の選択",
+    "homeward": "復路便の選択",
+    "flightName": "便名",
+    "departure": "出発",
+    "arrival": "到着",
+    "fare": "運賃",
+    "select": "選択",
+    "noResults": "該当するフライトがありません",
+    "prevDay": "前日",
+    "nextDay": "翌日",
+    "prev10": "前の10件",
+    "next10": "次の10件",
+    "seatsLeft": "残り{{count}}席",
+    "soldOut": "満席"
+  },
+  "flightTypes": {
+    "RT": "往復",
+    "OW": "片道"
+  },
+  "boardingClasses": {
+    "N": "普通席",
+    "S": "特別席"
+  }
+}
