@@ -6,3 +6,9 @@ target
 logs
 target-project
 reports
+
+# Python
+__pycache__/
+*.egg-info/
+.pytest_cache/
+.venv/
