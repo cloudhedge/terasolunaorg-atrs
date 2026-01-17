@@ -104,9 +104,9 @@ export interface Airport {
 export const AIRPORTS: Airport[] = [
   { code: 'HND', name: '羽田' },
   { code: 'ITM', name: '伊丹' },
-  { code: 'CTS', name: '新千歳' },
+  { code: 'SPK', name: '新千歳' },
   { code: 'FUK', name: '福岡' },
-  { code: 'OKA', name: '那覇' },
+  { code: 'OKA', name: '沖縄' },
   { code: 'NGO', name: '中部国際' },
   { code: 'KIX', name: '関西国際' },
   { code: 'SDJ', name: '仙台' },
