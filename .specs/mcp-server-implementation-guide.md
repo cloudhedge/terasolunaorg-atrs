@@ -2,11 +2,11 @@
 
 ## Overview
 
-This guide provides complete instructions for building a custom MCP (Model Context Protocol) server for the ATRS (Airline Ticket Reservation System) Java Spring application. The MCP server enables AI agents like Claude to interact with the ATRS REST API.
+This guide provides complete instructions for building a custom MCP (Model Context Protocol) server for the ATRS (Airline Ticket Reservation System) Java Spring application. The MCP server enables AI agents to interact with the ATRS REST API.
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
-│  Claude/Agent   │────▶│   MCP Server    │────▶│   ATRS REST API │
+│    AI Agent     │────▶│   MCP Server    │────▶│   ATRS REST API │
 │  (MCP Client)   │◀────│  (Node.js/TS)   │◀────│  /api/v1/*      │
 └─────────────────┘     └─────────────────┘     └─────────────────┘
 ```
@@ -1278,7 +1278,7 @@ export async function startServer(): Promise<void> {
 
 - **IMPORTANT**: API requires Full-width Katakana for names
 - MCP server should accept both English and Katakana
-- If English names are provided, the LLM (Claude) should convert them to Katakana before making the API call
+- If English names are provided, the LLM should convert them to Katakana before making the API call
 - Example: "Tanaka Taro" → "タナカ タロウ"
 
 ---
@@ -1310,9 +1310,9 @@ export async function startServer(): Promise<void> {
 | `ATRS_USER` | (none) | Auto-login membership number |
 | `ATRS_PASSWORD` | (none) | Auto-login password |
 
-### Claude Desktop Configuration
+### MCP Client Configuration
 
-File: `~/Library/Application Support/Claude/claude_desktop_config.json`
+File: MCP client configuration file (location varies by client)
 
 ```json
 {
@@ -1331,24 +1331,6 @@ File: `~/Library/Application Support/Claude/claude_desktop_config.json`
 ```
 
 **IMPORTANT**: Use full path to Node.js v18+ because MCP SDK requires it.
-
-### OpenCode Configuration
-
-File: `~/.config/opencode/config.json`
-
-```json
-{
-  "mcpServers": {
-    "atrs": {
-      "command": "node",
-      "args": ["/path/to/atrs-mcp-server/dist/index.js"],
-      "env": {
-        "ATRS_API_BASE_URL": "http://localhost:8080/atrs"
-      }
-    }
-  }
-}
-```
 
 ---
 
@@ -1405,10 +1387,7 @@ Database has flight data for these routes:
 
 ### Checking Logs
 
-Claude Desktop logs:
-```bash
-tail -f ~/Library/Logs/Claude/mcp-server-atrs.log
-```
+MCP Client logs (location varies by client)
 
 ---
 
@@ -1429,7 +1408,7 @@ tail -f ~/Library/Logs/Claude/mcp-server-atrs.log
 - [ ] Create all source files
 - [ ] Build TypeScript (`npm run build`)
 - [ ] Test with MCP protocol
-- [ ] Configure Claude Desktop
+- [ ] Configure MCP Client
 - [ ] Test end-to-end with ATRS running
 
 ---
