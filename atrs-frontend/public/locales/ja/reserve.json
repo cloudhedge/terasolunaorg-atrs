@@ -1,0 +1,46 @@
+{
+  "title": "予約",
+  "selectedFlights": "選択フライト",
+  "customerInfo": "お客様情報",
+  "passenger": "搭乗者{{index}}",
+  "representative": "代表者情報",
+  "copyFromPassenger1": "搭乗者1をコピー",
+  "addPassenger": "搭乗者を追加",
+  "confirm": "予約確認",
+  "backToSearch": "空席一覧に戻る",
+  "fields": {
+    "name": "お名前(カタカナ)",
+    "familyName": "セイ",
+    "givenName": "メイ",
+    "age": "年齢",
+    "gender": "性別",
+    "membershipNumber": "会員番号(10桁)",
+    "tel": "電話番号",
+    "email": "Eメール"
+  },
+  "table": {
+    "direction": "",
+    "date": "搭乗日",
+    "flightName": "便名",
+    "departure": "出発時刻",
+    "arrival": "到着時刻",
+    "route": "区間",
+    "boardingClass": "搭乗クラス",
+    "fareType": "運賃種別",
+    "fare": "運賃"
+  },
+  "directions": {
+    "outward": "往路",
+    "homeward": "復路"
+  },
+  "complete": {
+    "title": "予約完了",
+    "message": "ご予約ありがとうございます。",
+    "reserveNo": "予約番号",
+    "totalFare": "合計金額"
+  },
+  "fail": {
+    "title": "予約失敗",
+    "message": "申し訳ございません。予約処理中にエラーが発生しました。"
+  }
+}
