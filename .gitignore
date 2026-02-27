@@ -5,3 +5,9 @@
 target
 logs
 target-project
+
+# FedRAMP doc generation
+node_modules/
+__pycache__/
+fedramp-docs/node_modules/
+fedramp-docs/output/
